@@ -1,6 +1,6 @@
-# Amazon Bedrock Serverless Framework Python Example
+# Amazon Bedrock Lambda Demo
 
-This template demonstrates how to deploy an Amazon Bedrock Python function running on AWS Lambda using Serverless Framework. The deployed function includes an event definition that triggers a Lambda invocation when a .txt file is uploaded to an S3 bucket. The lambda function then reads in the contents of the .txt file and asks Jurassic-2 Ultra to summarize the text via a call to Bedrock.
+A simple demo of Amazon Bedrock via a Python function running on AWS Lambda using Serverless Framework. The deployed function includes an event definition that triggers a Lambda invocation when a .txt file is uploaded to an S3 bucket. The lambda function then reads in the contents of the file and asks Jurassic-2 Ultra to summarize the text via a call to Bedrock.
 
 ## Usage
 
@@ -34,5 +34,6 @@ aws s3 cp sample-medium-article.txt s3://your_bucket_name_here
 This should result in a response similar to the following in your Lambda function CloudWatch logs:
 
 ```
-The article provides an introduction to AWS CloudWatch Composite Alarms, which are alarms that determine the state by monitoring the states of other alarms...
+The article provides an introduction to AWS CloudWatch Composite Alarms,
+which are alarms that determine the state by monitoring the states of other alarms...
 ```
