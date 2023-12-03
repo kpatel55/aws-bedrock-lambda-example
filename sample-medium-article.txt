@@ -1,0 +1,50 @@
+ Introduction
+Imagine being called into work at 2:00 a.m. in the morning because of multiple alarms for one of your EC2 instances on AWS are going off, and you have to parse through the logs of each one to try and identify the issue. This is an all too common scenario for any Cloud or DevOps engineer responsible for maintaining infrastructure on AWS, and who uses CloudWatch Alarms to monitor the state of their services. It’s also completely avoidable.
+Composite Alarms
+Besides traditional alarms, AWS also offers something called Composite Alarms, which determine their states by monitoring the states of other alarms. For example, I can create an expression where the composite alarm goes into the ALARM state only if either CPU or disk read is too high and network-out is OK:
+(ALARM(CPUUtilizationTooHigh) OR ALARM(DiskReadOpsTooHigh)) AND OK(NetworkOutTooHigh)
+In other words, you can create a composite alarm where the underlying metric alarms go into ALARM when they meet specific conditions, thus reducing alarm noise. You can then set up your
+⏰
+🎬
+
+ composite alarms to perform some sort of action when they go into ALARM. Composite alarms can have the following actions:
+● NotifySNSTopics
+● CreateOpsItemsinAWSSystemsManagerOpsCenter
+● CreateincidentsinAWSSystemsManagerIncidentManager
+Composite Alarms also have an additional feature called action suppression, where you define alarms as suppressor alarms. Suppressor alarms prevent composite alarms from taking actions, so you can specify a suppressor alarm that represents the status of a supporting resource. If the supporting resource is down, the suppressor alarm prevents the composite alarm from sending notifications.
+Creating a Composite Alarm
+We’ll use the expression above as an example, with notifications NOT being sent while a network issue is occurring. I’ll be using Terraform
+󰳕
+
+ as the Infrastructure as Code (IaC) tool for provisioning the alarms, and all of the code can be found here.
+We’ll start by adding the underlying metric alarms via a module called alarm_module:
+The code snippet above creates three separate metric alarms CPUUtilization_alarm, DiskReadOps_alarm, and NetworkOut_alarm, which we refer to in our main.tf file while creating the composite alarm:
+A couple things to note here. First of all, we’ve declared a new SNS Topic ec2-alarm-topic and added it as an action to our composite alarm. So if we subscribe to the topic, we’ll get notified when the composite alarm’s state changes. We’ve also included an alert_rule argument, which we use to declare the expression for determining the state of the alarm. In addition, there’s a depends_on argument so
+ 
+ that all of the dependencies are created before our composite alarm, guaranteeing the underlying alarms are provisioned first.
+With our Terraform scripts complete, running terraform apply from our CLI will provision the resources to AWS:
+Newly created alarms
+Here, we see our composite alarm has been created along with the three individual metric alarms we previously declared, which are shown as child alarms. Now let’s test the alarm rule we setup with our
+ 
+ composite alarm by setting the the NetworkOut_alarm to ALARM, which should NOT set the ec2_composite_alarm to ALARM. To do so, we’ll use the AWS CLI which can be installed using the instructions found here, if you haven’t already. Now open up a terminal and run the following:
+aws cloudwatch set-alarm-state --alarm-name "NetworkOut_alarm"
+--state-value ALARM --state-reason "testing purposes"
+This manually changes the state of our network-out alarm to ALARM, allowing us to test whether or not our alarm rule works as intended:
+   
+  Setting network-out alarm to ALARM
+As expected, the composite alarm stays in the OK state, as our alarm rule requires the network-out alarm to also be in the OK state in order for it to go into ALARM. Now let’s try triggering the ALARM state for our composite alarm. First, lets set the NetworkOut_alarm back to OK:
+aws cloudwatch set-alarm-state --alarm-name "NetworkOut_alarm"
+--state-value OK --state-reason "testing purposes"
+Next, we’ll set the DiskReadOps_alarm to ALARM:
+  
+ aws cloudwatch set-alarm-state --alarm-name "DiskReadOps_alarm"
+--state-value ALARM --state-reason "testing purposes"
+  With DiskReadOps_alarm set to ALARM and NetworkOut_alarm back to OK, the alarm rule has been satisfied as we now see the composite alarm is in the ALARM state:
+Setting disk read alarm to ALARM, which triggers alert rule
+Conclusion
+ 🏁
+
+ Composite alarms gives you the ability to add logic and group alarms into a single high-level alarm, which are triggered when the alarm is met. This gives you the ability to add some level of organization to your alarms, and reduces the time to find and fix performance issues when they happen.
+For those interested in learning more about CloudWatch Composite Alarms, a great next step would be to take a look at action suppressors in the official docs. Try creating a suppressor alarm and uncomment the actions_suppressor argument in the main.tf file to add your alarm!
+If you liked this article, please leave a clap, and feel free to ask questions in the comments!
+ 🎙👏
