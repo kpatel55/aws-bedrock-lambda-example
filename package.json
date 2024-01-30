@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "serverless-provisioned-concurrency-autoscaling": "^1.9.1"
+  }
+}
