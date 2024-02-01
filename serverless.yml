@@ -42,9 +42,9 @@ functions:
       scaleInCooldown: 60
       scaleOutCooldown: 20
       scheduledActions:
-        - name: BlackFridayWeek
-          startTime: "2024-11-24T00:00:00.000Z"
-          endTime: "2025-12-02T23:59:59.999Z"
+        - name: FinalsWeek
+          startTime: "2024-12-14T00:00:00.000Z"
+          endTime: "2025-12-21T23:59:59.999Z"
           timezone: "America/New_York"
           schedule: "rate(1 hour)"
           action:
