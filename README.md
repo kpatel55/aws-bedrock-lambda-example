@@ -6,10 +6,11 @@ A simple demo of Amazon Bedrock via a Python function running on AWS Lambda usin
 
 ### Deployment
 
-In order to deploy the example, you'll need to specify a globally unique bucket name in the serverless.yml file on lines 21 and 40. Then run the following command:
+In order to deploy the example, you'll need to specify a globally unique bucket name in the serverless.yml file on lines 21 and 40. Then run the following commands to install the autoscaling plugin and to deploy:
 
 ```
-$ sls deploy
+npm install serverless-provisioned-concurrency-autoscaling
+sls deploy
 ```
 
 After running deploy, you should see output similar to:
