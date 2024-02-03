@@ -50,7 +50,6 @@ functions:
           action:
             maximum: 50
             minimum: 10
-
     layers:
       - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p311-arm64-boto3:4
     events:
