@@ -4,11 +4,13 @@ A simple demo of Amazon Bedrock via a Python function running on AWS Lambda usin
 
 This guide assumes you've already obtained access to the Jurassic-2 Ultra model for your AWS account. If not, instructions on how to do so can be found here: https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html
 
+The Medium article related to this demo can be found here: https://medium.com/@kpatel55/autoscaling-bedrock-requests-using-lambda-and-serverless-framework-4738fcafd78c
+
 ## Usage
 
 ### Deployment
 
-In order to deploy the example, you'll need to specify a globally unique bucket name in the serverless.yml file on lines 21 and 58. Then run the following commands to install the autoscaling plugin and to deploy:
+In order to deploy the example, you'll need to specify a globally unique bucket name in the serverless.yml file on lines 21 and 57. Then run the following commands to install the autoscaling plugin and to deploy:
 
 ```
 npm install serverless-provisioned-concurrency-autoscaling
